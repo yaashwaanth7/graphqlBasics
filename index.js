@@ -50,8 +50,64 @@ const resolvers = {
     game(parent){
         return db.authors.find((g) => g.id === parent.game_id)
     },
- }
- 
+ },
+
+ // mutation -> add , delete , inserd , update
+ Mutation: {
+    deleteGame(_, args){
+        db.games = db.games.filter((g) => g.id !== args.id)
+        return db.games
+    },
+ //  syntax
+//  mutation DeleteMutation($id: ID!){
+//     deleteGame(id: $id) {
+//       id,
+//       title,
+//       platform
+//     }
+//     }
+
+    addGame(_,args){
+        let game = {
+            ...args.game,
+            id: Math.floor(Math.random() * 10000).toString()
+        }
+        db.games.push(game)
+        return game;
+    },
+ //  Syntax .....
+//  mutation addMutation($game: AddGameInput!){
+//     addGame(game: $game) {
+//       id,
+//       title,
+//       platform
+//     }
+//     }
+
+    updateGame(_,args){
+        db.games = db.games.map((g)=> {
+            if(g.id === args.id){
+                return {...g, ...args.edits}
+            }
+            return g
+        })
+    
+        return db.games.find((g) => g.id === args.id)
+    }
+    // syntax
+    // mutation updateMutation($id : ID!, $edits: EditGameInput){
+    //     updateGame(id: $id , edits: $edits) {
+    //       title,
+    //       platform
+       
+    //     }
+    //    }
+ },
+
+
+
+
+
 }
 
 // server setup
